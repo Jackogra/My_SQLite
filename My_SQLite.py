@@ -74,9 +74,10 @@ if __name__ == '__main__':
     if conn is not None:
         execute_sql(conn, create_customers_sql)
         execute_sql(conn, create_orders_sql)
-        customer = ("Jasek", "Pralka", "pjasek@pl", "0700700123", "Koniki Polne 2A, 58-666 Hell")
-        cus_id = add_customers(conn, customer)
-        customer = ("Marian", "Kluska", "muska@pl", "+480700555000", "Slonika Wodnego 11m8, 52-111 Glazy")
-        cus_id = add_customers(conn, customer)
+        customers = [("Jasek", "Pralka", "pjasek@pl", "0700700123", "Koniki Polne 2A, 58-666 Hell"),
+                     ("Marian", "Kluska", "muska@pl", "+480700555000", "Slonika Wodnego 11m8, 52-111 Glazy"),
+                     ("Johny", "Bravo", "jb@cn.com", "0800 CALL ME", "Cartoon Network")]
+        for customer in customers:
+            add_customers(conn, customer)
         conn.close()
 
