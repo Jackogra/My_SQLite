@@ -30,17 +30,31 @@ def execute_sql(conn, sql):
         print(e)
 
 
+def add_customers(conn, customer):
+    """
+    Create a new customer account
+    :param conn:
+    :param customer:
+    :return:
+    """
+    sql = """INSERT INTO customers(name, surname, email, phone, address) VALUES(?, ?, ?, ?, ?)"""
+    cur = conn.cursor()
+    cur.execute(sql, customer)
+    conn.commit()
+    return cur.lastrowid
+
+
 if __name__ == '__main__':
 
     create_customers_sql = """
         CREATE TABLE IF NOT EXISTS customers (
-        customer_id INT PRIMARY KEY,
+        customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(50) NOT NULL,
         surname VARCHAR(50) NOT NULL, 
         email VARCHAR(100) NOT NULL, 
         phone VARCHAR(15), 
         address TEXT,
-        created DATE
+        created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """
 
@@ -60,4 +74,9 @@ if __name__ == '__main__':
     if conn is not None:
         execute_sql(conn, create_customers_sql)
         execute_sql(conn, create_orders_sql)
+        customer = ("Jasek", "Pralka", "pjasek@pl", "0700700123", "Koniki Polne 2A, 58-666 Hell")
+        cus_id = add_customers(conn, customer)
+        customer = ("Marian", "Kluska", "muska@pl", "+480700555000", "Slonika Wodnego 11m8, 52-111 Glazy")
+        cus_id = add_customers(conn, customer)
         conn.close()
+
