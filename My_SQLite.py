@@ -74,6 +74,61 @@ def display(conn, table):
     return rows
 
 
+def update(conn, table, id_column, id, **kwargs):
+    """
+    Update the data
+    :param conn:
+    :param table:
+    :param id:
+    :param kwargs:
+    :return:
+    """
+    parameters = [f"{k} = ?" for k in kwargs]
+    parameters = ", ".join(parameters)
+    values = tuple(v for v in kwargs.values())
+    values += (id, )
+    sql = f"""UPDATE {table} SET {parameters} WHERE {id_column} = ?"""
+    cur = conn.cursor()
+    cur.execute(sql, values)
+    conn.commit()
+
+
+def delete_where(conn, table, **kwargs):
+    """
+    Delete from table where attributes from
+    :param conn:  Connection to the SQLite database
+    :param table: table name
+    :param kwargs: dict of attributes and values
+    :return:
+    """
+    qs = []
+    values = tuple()
+    for k, v in kwargs.items():
+        qs.append(f"{k}=?")
+        values += (v,)
+    q = " AND ".join(qs)
+
+    sql = f'DELETE FROM {table} WHERE {q}'
+    cur = conn.cursor()
+    cur.execute(sql, values)
+    conn.commit()
+    print("Deleted")
+
+
+def delete_all(conn, table):
+    """
+    Delete all rows from table
+    :param conn: Connection to the SQLite database
+    :param table: table name
+    :return:
+    """
+    sql = f'DELETE FROM {table}'
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    print("Deleted")
+
+
 if __name__ == '__main__':
 
     create_customers_sql = """
@@ -112,6 +167,10 @@ if __name__ == '__main__':
 
         order = (2, 15.55)
         order_id = add_orders(conn, order)
-        display(conn, "orders")
+        # display(conn, "orders")
+        # update(conn, "customers", "customer_id", 1, name="Jacek")
+        # update(conn, "orders", "order_id", 2, amount=25.55)
+        # delete_where(conn, "orders", order_id=3)
+        # delete_all(conn, "orders")
         conn.close()
 
