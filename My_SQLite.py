@@ -44,6 +44,36 @@ def add_customers(conn, customer):
     return cur.lastrowid
 
 
+def add_orders(conn, order):
+    """
+    Create orders placed by customers
+    :param conn:
+    :param order:
+    :return:
+    """
+    sql = """INSERT INTO orders(customer_id, amount) VALUES(?, ?)"""
+    cur = conn.cursor()
+    cur.execute(sql, order)
+    conn.commit()
+    return cur.lastrowid
+
+
+def display(conn, table):
+    """
+    Display all database rows for chosen table
+    :param conn:
+    :param table:
+    :return:
+    """
+    sql = f"""SELECT * FROM {table}"""
+    cur = conn.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+    for row in rows:
+        print(row)
+    return rows
+
+
 if __name__ == '__main__':
 
     create_customers_sql = """
@@ -60,9 +90,9 @@ if __name__ == '__main__':
 
     create_orders_sql = """
         CREATE TABLE IF NOT EXISTS orders (
-        order_id INT PRIMARY KEY, 
+        order_id INTEGER PRIMARY KEY AUTOINCREMENT,
         customer_id INT, 
-        order_date TIMESTAMP, 
+        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
         amount DECIMAL(10,2) NOT NULL,
         FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
         );
@@ -79,5 +109,9 @@ if __name__ == '__main__':
                      ("Johny", "Bravo", "jb@cn.com", "0800 CALL ME", "Cartoon Network")]
         for customer in customers:
             add_customers(conn, customer)
+
+        order = (2, 15.55)
+        order_id = add_orders(conn, order)
+        display(conn, "orders")
         conn.close()
 
